@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MaxPrompt — Discover Your AI Mastery Level</title>
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/pages.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Landing Page -->
+      <section id="landing-page" class="page">
+        <div class="landing-content">
+          <h1 class="logo">MaxPrompt</h1>
+          <p class="tagline">Discover how well you really use AI</p>
+          <button class="btn-primary" onclick="goToNameInput()">
+            Start Assessment
+          </button>
+        </div>
+      </section>
+
+      <!-- Name Input Screen -->
+      <section id="name-input-page" class="page hidden">
+        <div class="name-content">
+          <h2>What should we call you?</h2>
+          <p class="subtitle">Enter your first name</p>
+          <input
+            type="text"
+            id="username-input"
+            class="name-input"
+            placeholder="Your name"
+            maxlength="20"
+          />
+          <p class="validation-msg" id="name-validation"></p>
+          <button class="btn-primary" onclick="submitName()">Continue</button>
+        </div>
+      </section>
+
+      <!-- Pre-Quiz Prediction -->
+      <section id="prediction-page" class="page hidden">
+        <div class="prediction-content">
+          <h2 id="prediction-greeting"></h2>
+          <!-- <p class="subtitle">
+            Before we start — what % do you think you use AI at?
+          </p> -->
+          <div class="slider-container">
+            <input
+              type="range"
+              id="prediction-slider"
+              min="0"
+              max="100"
+              value="50"
+            />
+            <div class="slider-value" id="slider-display">50%</div>
+          </div>
+          <button class="btn-primary" onclick="submitPrediction()">
+            Start Quiz
+          </button>
+        </div>
+      </section>
+
+      <!-- Quiz Page -->
+      <section id="quiz-page" class="page hidden">
+        <div class="quiz-header">
+          <span class="question-counter"
+            >Question <span id="current-q">1</span> of 10</span
+          >
+          <button class="btn-text" onclick="restartQuiz()">Start Over</button>
+        </div>
+        <div class="quiz-progress">
+          <div class="progress-bar" id="quiz-progress-bar"></div>
+        </div>
+        <div class="quiz-content">
+          <h2 id="question-text"></h2>
+          <div class="options-container" id="options-container"></div>
+        </div>
+      </section>
+
+      <!-- Calculating Screen -->
+      <section id="calculating-page" class="page hidden">
+        <div class="calculating-content">
+          <div class="loader"></div>
+          <h2 id="calculating-text">Analysing...</h2>
+        </div>
+      </section>
+
+      <!-- Score Reveal Page -->
+      <section id="score-reveal-page" class="page hidden">
+        <div class="reveal-content">
+          <h2 id="reveal-intro">Your results are in.</h2>
+          <p id="prediction-display" class="prediction-display"></p>
+          <p id="actual-score-label" class="actual-score-label hidden">
+            Your actual score:
+          </p>
+          <div class="score-meter-container">
+            <div class="score-meter" id="score-meter">
+              <div class="score-meter-fill" id="score-meter-fill"></div>
+              <div class="score-meter-pointer" id="score-meter-pointer"></div>
+            </div>
+            <div class="score-value-display" id="score-value-display">0%</div>
+          </div>
+          <div id="archetype-reveal" class="archetype-reveal hidden">
+            <h1 id="archetype-title"></h1>
+            <p id="archetype-subtitle"></p>
+          </div>
+          <div id="gap-message" class="gap-message hidden"></div>
+          <button
+            id="see-breakdown-btn"
+            class="btn-primary hidden"
+            onclick="showBreakdown()"
+          >
+            See your full breakdown →
+          </button>
+        </div>
+      </section>
+
+      <!-- Archetype Deep Dive Page -->
+      <section id="archetype-page" class="page hidden">
+        <div class="archetype-content">
+          <div class="archetype-badge" id="archetype-badge"></div>
+          <h1 id="archetype-headline"></h1>
+          <div class="archetype-sections">
+            <div class="archetype-section">
+              <h3>What's happening</h3>
+              <p id="archetype-whats-happening"></p>
+            </div>
+            <div class="archetype-section">
+              <h3>Biggest gap</h3>
+              <p id="archetype-gap"></p>
+            </div>
+            <div class="archetype-section highlight">
+              <h3>This week's focus</h3>
+              <p id="archetype-focus"></p>
+            </div>
+            <div class="archetype-section">
+              <h3>Encouraging closer</h3>
+              <p id="archetype-closer"></p>
+            </div>
+          </div>
+          <button type="button" class="btn-primary" onclick="goToChallenge()">
+            Unlock Day 1 Challenge
+          </button>
+        </div>
+      </section>
+
+      <!-- Day 1 Challenge Page -->
+      <section id="challenge-page" class="page hidden">
+        <div class="challenge-content">
+          <div class="challenge-badge">Day 1 Challenge</div>
+          <h2 id="challenge-title"></h2>
+          <div class="challenge-box" id="challenge-box">
+            <p id="challenge-description"></p>
+          </div>
+          <button
+            type="button"
+            class="btn-primary"
+            onclick="completeChallenge()"
+          >
+            Mark Complete
+          </button>
+        </div>
+      </section>
+
+      <!-- Dashboard Page -->
+      <section id="dashboard-page" class="page hidden">
+        <div class="dashboard-content">
+          <div class="dashboard-header">
+            <h1 id="dashboard-greeting"></h1>
+            <div class="archetype-badge" id="dashboard-archetype-badge"></div>
+          </div>
+          <div class="score-overview">
+            <div class="main-score">
+              <span class="score-label">Your Score</span>
+              <span class="score-number" id="dashboard-score"></span>
+            </div>
+            <div class="prediction-comparison">
+              <span
+                >You predicted: <strong id="dashboard-prediction"></strong
+              ></span>
+            </div>
+          </div>
+          <div class="category-bars" id="category-bars"></div>
+          <div class="day-progress">
+            <h3>7-Day Challenge Progress</h3>
+            <div class="progress-days">
+              <div class="day" id="day-1" onclick="viewDay(1)">1</div>
+              <div class="day" id="day-2" onclick="viewDay(2)">2</div>
+              <div class="day" id="day-3" onclick="viewDay(3)">3</div>
+              <div class="day" id="day-4" onclick="viewDay(4)">4</div>
+              <div class="day" id="day-5" onclick="viewDay(5)">5</div>
+              <div class="day" id="day-6" onclick="viewDay(6)">6</div>
+              <div class="day" id="day-7" onclick="viewDay(7)">7</div>
+            </div>
+            <p class="day-progress-text" id="day-progress-text">Day 1 of 7</p>
+            <p class="day-hint">Click a completed day to view its challenge</p>
+          </div>
+          <div class="dashboard-actions">
+            <button
+              class="btn-secondary"
+              onclick="retakeQuiz()"
+              id="retake-btn"
+            >
+              Retake Quiz
+            </button>
+            <button class="btn-primary" onclick="resetAll()">Start Over</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Retake Warning Modal -->
+      <div id="retake-modal" class="modal hidden">
+        <div class="modal-content">
+          <h3>Wait!</h3>
+          <p>
+            Scores taken less than 7 days apart don't reflect real behaviour
+            change.
+          </p>
+          <button class="btn-primary" onclick="closeModal()">
+            I Understand
+          </button>
+        </div>
+      </div>
+
+      <!-- THE VAULT Page -->
+      <section id="vault-page" class="page hidden">
+        <div class="vault-container">
+          <div class="section-header">
+            <h1>The Vault</h1>
+            <p>Prompt techniques that actually work</p>
+          </div>
+          <div class="vault-tabs" id="vault-tabs">
+            <button class="vault-tab active" data-filter="all">All</button>
+            <button class="vault-tab" data-filter="emails">Emails</button>
+            <button class="vault-tab" data-filter="content">Content</button>
+            <button class="vault-tab" data-filter="research">Research</button>
+            <button class="vault-tab" data-filter="problem-solving">
+              Problem-Solving
+            </button>
+            <button class="vault-tab" data-filter="code">Code Help</button>
+            <button class="vault-tab" data-filter="decisions">Decisions</button>
+          </div>
+          <div class="vault-cards" id="vault-cards"></div>
+        </div>
+      </section>
+
+      <!-- THE LAB Page -->
+      <section id="lab-page" class="page hidden">
+        <div class="lab-container">
+          <div class="section-header">
+            <h1>The Lab</h1>
+            <p>Practice. Score. Improve.</p>
+          </div>
+          <div class="lab-categories" id="lab-categories">
+            <button class="lab-cat-btn active" data-category="email">
+              📧 Email
+            </button>
+            <button class="lab-cat-btn" data-category="content">
+              📝 Content
+            </button>
+            <button class="lab-cat-btn" data-category="research">
+              🔍 Research
+            </button>
+            <button class="lab-cat-btn" data-category="problem-solving">
+              💡 Problem Solving
+            </button>
+            <button class="lab-cat-btn" data-category="decisions">
+              🎯 Decisions
+            </button>
+          </div>
+          <div class="lab-missions" id="lab-missions"></div>
+        </div>
+      </section>
+
+      <!-- Lab Mission Detail -->
+      <section id="lab-mission-page" class="page hidden">
+        <div class="lab-mission-detail">
+          <div class="mission-card">
+            <div class="mission-header">
+              <span class="mission-level-badge" id="mission-level-badge"
+                >Level 1</span
+              >
+              <h2 id="mission-title"></h2>
+            </div>
+            <div class="mission-scenario">
+              <h3>Scenario</h3>
+              <p id="mission-scenario"></p>
+            </div>
+            <div class="mission-task">
+              <h3>Your Task</h3>
+              <p id="mission-task"></p>
+            </div>
+            <div class="mission-hint">
+              <span class="hint-icon">💡</span>
+              <span id="mission-hint-text"></span>
+            </div>
+            <div class="mission-prompt-area">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <h3>Write Your Prompt</h3>
+                <button class="btn-text" onclick="copyCurrentPrompt()" style="font-size: 0.85rem;">
+                  📋 Copy Prompt
+                </button>
+              </div>
+              <textarea
+                id="user-prompt-input"
+                placeholder="Write your prompt here... Think about what techniques you're using!"
+              ></textarea>
+            </div>
+            <button class="btn-primary" onclick="submitPrompt()">
+              Evaluate My Prompt
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Lab Results -->
+      <section id="lab-results-page" class="page hidden">
+        <div class="lab-results">
+          <h2>Your Prompt Score</h2>
+          <div class="score-circle" id="result-score-circle">
+            <span id="result-score">0</span>
+            <small>/100</small>
+          </div>
+          <div class="score-level" id="result-level"></div>
+          <div class="score-breakdown" id="score-breakdown"></div>
+          <div class="result-tip">
+            <span class="tip-icon">📌</span>
+            <p><strong>Missing:</strong> <span id="result-missing"></span></p>
+          </div>
+          <div class="result-tip">
+            <span class="tip-icon">💡</span>
+            <p><strong>Tip:</strong> <span id="result-tip"></span></p>
+          </div>
+          <div class="result-actions">
+            <button class="btn-secondary" onclick="retryMission()">
+              Try Again
+            </button>
+            <button
+              class="btn-primary"
+              id="save-prompt-btn"
+              onclick="saveToPlaybook()"
+            >
+              Save to Playbook
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- MY PLAYBOOK Page -->
+      <section id="playbook-page" class="page hidden">
+        <div class="playbook-container">
+          <div class="section-header">
+            <h1 id="playbook-title">My Playbook</h1>
+            <p id="playbook-subtitle">Your saved prompts</p>
+          </div>
+          <div class="playbook-filters" id="playbook-filters">
+            <button class="playbook-filter active" data-filter="all">
+              All
+            </button>
+            <button class="playbook-filter" data-filter="email">Email</button>
+            <button class="playbook-filter" data-filter="content">
+              Content
+            </button>
+            <button class="playbook-filter" data-filter="research">
+              Research
+            </button>
+            <button class="playbook-filter" data-filter="problem-solving">
+              Problem Solving
+            </button>
+            <button class="playbook-filter" data-filter="decisions">
+              Decisions
+            </button>
+          </div>
+          <div class="playbook-empty" id="playbook-empty">
+            <p>Complete Lab missions to unlock saving.</p>
+            <p>Your best prompts live here.</p>
+            <button class="btn-primary" onclick="navigateTo('lab')">
+              Go to Lab
+            </button>
+          </div>
+          <div class="playbook-cards" id="playbook-cards"></div>
+          <div class="tool-links-panel">
+            <h3>Try Your Prompts On:</h3>
+            <div class="tools-grid">
+              <a href="https://claude.ai" target="_blank" class="tool-link">
+                <span class="tool-icon">🤖</span>
+                <span class="tool-name">Claude</span>
+                <span class="tool-desc"
+                  >Best for: analysis, writing, reasoning</span
+                >
+              </a>
+              <a href="https://perplexity.ai" target="_blank" class="tool-link">
+                <span class="tool-icon">🔍</span>
+                <span class="tool-name">Perplexity</span>
+                <span class="tool-desc">Best for: research, live data</span>
+              </a>
+              <a href="https://chatgpt.com" target="_blank" class="tool-link">
+                <span class="tool-icon">🧪</span>
+                <span class="tool-name">ChatGPT</span>
+                <span class="tool-desc">Best for: general tasks, code</span>
+              </a>
+              <a href="https://poe.com" target="_blank" class="tool-link">
+                <span class="tool-icon">🎯</span>
+                <span class="tool-name">Poe</span>
+                <span class="tool-desc"
+                  >Best for: trying multiple AI models free</span
+                >
+              </a>
+              <a href="https://arena.ai" target="_blank" class="tool-link">
+                <span class="tool-icon">🎯</span>
+                <span class="tool-name">Arena</span>
+                <span class="tool-desc"
+                  >Best for: trying multiple AI models free</span
+                >
+              </a>
+              <a
+                href="https://chatgptfree.ai/"
+                target="_blank"
+                class="tool-link"
+              >
+                <span class="tool-icon">🎯</span>
+                <span class="tool-name">Chatgpt Free</span>
+                <span class="tool-desc"
+                  >Best for: trying multiple AI models free</span
+                >
+              </a>
+            </div>
+            <p class="pro-tip">
+              Pro tip: Copy your best prompt and run it on 2 different tools.
+              The output difference will teach you more than any tutorial.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+          <!-- Navigation Bar -->
+      <nav id="main-nav" class="nav-bar hidden">
+        <div
+          class="nav-item"
+          onclick="navigateTo('dashboard')"
+          id="nav-dashboard"
+        >
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Home</span>
+        </div>
+        <div class="nav-item" onclick="navigateTo('vault')" id="nav-vault">
+          <span class="nav-icon">📚</span>
+          <span class="nav-label">Vault</span>
+        </div>
+        <div class="nav-item" onclick="navigateTo('lab')" id="nav-lab">
+          <span class="nav-icon">🧪</span>
+          <span class="nav-label">Lab</span>
+        </div>
+        <div
+          class="nav-item"
+          onclick="navigateTo('playbook')"
+          id="nav-playbook"
+        >
+          <span class="nav-icon">📖</span>
+          <span class="nav-label">Playbook</span>
+        </div>
+      </nav>
+
+    <!-- Scripts - Order matters! -->
+    <script src="config/api.js"></script>
+    <script src="data/archetypes.js"></script>
+    <script src="data/vault.js"></script>
+    <script src="data/missions.js"></script>
+    <script src="data/challenges.js"></script>
+    <script src="core/storage.js"></script>
+    <script src="core/scoring.js"></script>
+    <script src="core/router.js"></script>
+    <script src="pages/quiz.js"></script>
+    <script src="pages/dashboard.js"></script>
+    <script src="pages/vault.js"></script>
+    <script src="pages/lab.js"></script>
+    <script src="pages/playbook.js"></script>
+  </body>
+</html>
