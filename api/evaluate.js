@@ -15,7 +15,7 @@ export default async function handler(req, res) {
       "X-Title": "MaxPrompt"
     },
     body: JSON.stringify({
-      model: "meta-llama/llama-3.3-70b-instruct:free",
+      model: "qwen/qwen-2.5-7b-instruct:free",
       max_tokens: 1000,
       messages: [
         { role: "system", content: systemPrompt },
