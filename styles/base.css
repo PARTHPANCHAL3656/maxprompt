@@ -1,0 +1,102 @@
+/* :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-light: #818cf8;
+    --secondary: #10b981;
+    --secondary-dark: #059669;
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border: #334155;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --gradient-start: #6366f1;
+    --gradient-end: #8b5cf6;
+} */
+:root {
+  --primary: #e85428;        /* Minh Pham burnt orange — main accent */
+  --primary-dark: #fa291a;   /* darker orange for hover states */
+  --primary-light: #f07050;  /* lighter orange for subtle highlights */
+  --secondary: #d4c9b0;      /* warm cream — replaces lime/blue */
+  --secondary-dark: #b0a590; /* darker cream for hover */
+  --bg-dark: #0d0d0d;        /* near-black site background */
+  --bg-card: #1a1a1a;        /* slightly lifted card surface */
+  --bg-card-hover: #242424;  /* hover state */
+  --text-primary: #f0ece4;   /* warm off-white */
+  --text-secondary: #8a8278; /* muted warm grey */
+  --text-muted: #5a5550;     /* dimmer warm grey */
+  --border: #2a2826;         /* subtle warm-dark border */
+  --danger: #ff4b4b;         /* kept — universally readable red */
+  --warning: #ffc800;        /* kept — streak yellow works here too */
+  --gradient-start: #e85428; /* orange start */
+  --gradient-end: #c43d18;   /* deeper orange end */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+#app {
+    min-height: 100vh;
+}
+
+.page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.logo {
+    font-size: 4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    letter-spacing: -2px;
+}
+
+h1, h2, h3 {
+    font-weight: 600;
+}
