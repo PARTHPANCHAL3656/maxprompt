@@ -61,6 +61,9 @@ maxprompt/
 │
 ├── index.html              ← single page app shell
 │
+├── api/
+│   ├── evaluate.js      ← copy this used for Vercel 
+│  
 ├── config/
 │   ├── api.example.js      ← copy this, rename to api.js, add your key
 │   └── api.js              ← your actual key (gitignored, never committed)
