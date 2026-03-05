@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      "HTTP-Referer": "https://maxprompt.vercel.app",
+      "HTTP-Referer": "https://maxprompt-blue.vercel.app/",
       "X-Title": "MaxPrompt"
     },
     body: JSON.stringify({
