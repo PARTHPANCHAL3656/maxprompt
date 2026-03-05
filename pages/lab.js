@@ -121,19 +121,14 @@ Return ONLY valid JSON. No preamble. No explanation. Just this exact structure:
   "missingElement": "The single most important missing element in one phrase."
 }`;
 
-    const response = await fetch(API_CONFIG.endpoint, {
+    const response = await fetch("/api/evaluate", {
         method: "POST",
-        headers: { 
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + API_CONFIG.key,
-            "HTTP-Referer": API_CONFIG.headers["HTTP-Referer"],
-            "X-Title": API_CONFIG.headers["X-Title"]
+        headers: {
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            model: API_CONFIG.model,
-            max_tokens: 1000,
+            systemPrompt: systemPrompt,
             messages: [
-                { role: "system", content: systemPrompt },
                 { role: "user", content: `Evaluate this prompt attempt:\n\n"${userPrompt}"` }
             ]
         })
