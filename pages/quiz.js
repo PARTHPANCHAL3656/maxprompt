@@ -240,19 +240,12 @@ function showScoreReveal() {
   setTimeout(() => {
     const seeBtn = document.getElementById("see-breakdown-btn");
     seeBtn.classList.remove("hidden");
-    
-    // Pre-show the nav bar so the dashboard works without reload
-    document.getElementById("main-nav").classList.remove("hidden");
-    document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
-    const dashNav = document.getElementById("nav-dashboard");
-    if (dashNav) dashNav.classList.add("active");
   }, 4500);
+  
 }
 
 function showBreakdown() {
   showArchetypePage();
-  // Ensure nav is visible after quiz completion
-  document.getElementById("main-nav").classList.remove("hidden");
 }
 
 function showArchetypePage() {
