@@ -188,7 +188,7 @@ function showScoreReveal() {
 
   // Vercel Analytics — track quiz completion
   if (window.va) {
-    window.va("event", { name: "quiz_completed", data: { score: finalScore } });
+    window.va('event', { name: 'quiz_completed', data: { score: result.total, archetype: archetypeKey } });
   }
   // In pages/lab.js — after a mission passes 75%
   if (window.va) window.va("event", { name: "lab_mission_passed" });
@@ -241,7 +241,7 @@ function showScoreReveal() {
     const seeBtn = document.getElementById("see-breakdown-btn");
     seeBtn.classList.remove("hidden");
     
-    // Pre-show the nav bar so dashboard works without reload
+    // Pre-show the nav bar so the dashboard works without reload
     document.getElementById("main-nav").classList.remove("hidden");
     document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
     const dashNav = document.getElementById("nav-dashboard");
