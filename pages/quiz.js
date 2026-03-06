@@ -190,10 +190,9 @@ function showScoreReveal() {
   if (window.va) {
     window.va("event", { name: "quiz_completed", data: { score: finalScore } });
   }
-    
   // In pages/lab.js — after a mission passes 75%
   if (window.va) window.va("event", { name: "lab_mission_passed" });
-    
+
   // In pages/vault.js — after Got It is clicked
   if (window.va) window.va("event", { name: "vault_card_read" });
   showPage("score-reveal-page");
@@ -239,12 +238,21 @@ function showScoreReveal() {
   }, 3800);
 
   setTimeout(() => {
-    document.getElementById("see-breakdown-btn").classList.remove("hidden");
+    const seeBtn = document.getElementById("see-breakdown-btn");
+    seeBtn.classList.remove("hidden");
+    
+    // Pre-show the nav bar so dashboard works without reload
+    document.getElementById("main-nav").classList.remove("hidden");
+    document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
+    const dashNav = document.getElementById("nav-dashboard");
+    if (dashNav) dashNav.classList.add("active");
   }, 4500);
 }
 
 function showBreakdown() {
   showArchetypePage();
+  // Ensure nav is visible after quiz completion
+  document.getElementById("main-nav").classList.remove("hidden");
 }
 
 function showArchetypePage() {
@@ -293,7 +301,7 @@ function goToChallenge() {
   if (challengesDone.includes(currentDay)) {
     completeBtn.textContent = "Back to Dashboard";
     completeBtn.onclick = function () {
-      showDashboard();
+      navigateTo("dashboard");
     };
   } else {
     completeBtn.textContent = "Mark Complete";
@@ -323,7 +331,7 @@ function completeAndAdvance(dayNum) {
     setStorage("mx_day", currentDay + 1);
   }
 
-  showDashboard();
+  navigateTo("dashboard");
 }
 
 function retakeQuiz() {
