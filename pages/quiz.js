@@ -301,7 +301,7 @@ function goToChallenge() {
   if (challengesDone.includes(currentDay)) {
     completeBtn.textContent = "Back to Dashboard";
     completeBtn.onclick = function () {
-      navigateTo("dashboard");
+      showDashboard();
     };
   } else {
     completeBtn.textContent = "Mark Complete";
@@ -331,7 +331,7 @@ function completeAndAdvance(dayNum) {
     setStorage("mx_day", currentDay + 1);
   }
 
-  navigateTo("dashboard");
+  showDashboard();
 }
 
 function retakeQuiz() {
