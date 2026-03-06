@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MaxPrompt — Discover Your AI Mastery Level</title>
+
+    <script defer src="/_vercel/insights/script.js"></script>
+
     <link rel="stylesheet" href="styles/base.css" />
     <link rel="stylesheet" href="styles/components.css" />
     <link rel="stylesheet" href="styles/pages.css" />
@@ -296,9 +299,20 @@
               <span id="mission-hint-text"></span>
             </div>
             <div class="mission-prompt-area">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 0.5rem;
+                "
+              >
                 <h3>Write Your Prompt</h3>
-                <button class="btn-text" onclick="copyCurrentPrompt()" style="font-size: 0.85rem;">
+                <button
+                  class="btn-text"
+                  onclick="copyCurrentPrompt()"
+                  style="font-size: 0.85rem"
+                >
                   📋 Copy Prompt
                 </button>
               </div>
@@ -435,33 +449,29 @@
       </section>
     </div>
 
-          <!-- Navigation Bar -->
-      <nav id="main-nav" class="nav-bar hidden">
-        <div
-          class="nav-item"
-          onclick="navigateTo('dashboard')"
-          id="nav-dashboard"
-        >
-          <span class="nav-icon">🏠</span>
-          <span class="nav-label">Home</span>
-        </div>
-        <div class="nav-item" onclick="navigateTo('vault')" id="nav-vault">
-          <span class="nav-icon">📚</span>
-          <span class="nav-label">Vault</span>
-        </div>
-        <div class="nav-item" onclick="navigateTo('lab')" id="nav-lab">
-          <span class="nav-icon">🧪</span>
-          <span class="nav-label">Lab</span>
-        </div>
-        <div
-          class="nav-item"
-          onclick="navigateTo('playbook')"
-          id="nav-playbook"
-        >
-          <span class="nav-icon">📖</span>
-          <span class="nav-label">Playbook</span>
-        </div>
-      </nav>
+    <!-- Navigation Bar -->
+    <nav id="main-nav" class="nav-bar hidden">
+      <div
+        class="nav-item"
+        onclick="navigateTo('dashboard')"
+        id="nav-dashboard"
+      >
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Home</span>
+      </div>
+      <div class="nav-item" onclick="navigateTo('vault')" id="nav-vault">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Vault</span>
+      </div>
+      <div class="nav-item" onclick="navigateTo('lab')" id="nav-lab">
+        <span class="nav-icon">🧪</span>
+        <span class="nav-label">Lab</span>
+      </div>
+      <div class="nav-item" onclick="navigateTo('playbook')" id="nav-playbook">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Playbook</span>
+      </div>
+    </nav>
 
     <!-- Scripts - Order matters! -->
     <script src="data/archetypes.js"></script>
