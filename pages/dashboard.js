@@ -422,19 +422,6 @@ function downloadCertificate(name, archetype, oldArchetype, score) {
     ctx.font = '18px Arial';
     ctx.fillText('Find out your AI skill level — free, no login', 540, 935);
 
-    ctx.fillStyle = '#7c3aed';
-    ctx.font = 'bold 40px Georgia';
-    ctx.fillText(`Effective Score: ${score}%`, 540, 640);
-
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '30px Arial';
-    ctx.fillText(`Achieved by ${name}`, 540, 700);
-
-    const today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-    ctx.fillStyle = '#666666';
-    ctx.font = '22px Arial';
-    ctx.fillText(today, 540, 750);
-
     // Download
     const link = document.createElement('a');
     link.download = `MaxPrompt_${archetype.title.replace(/\s/g, '_')}_${name}.png`;
