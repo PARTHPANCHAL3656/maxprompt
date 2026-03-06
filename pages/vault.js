@@ -1,26 +1,27 @@
 // Vault page functions
-let currentVaultFilter = 'all';
+let currentVaultFilter = "all";
 
 function showVault() {
-    const effective = getEffectiveScore().effective;
-    const container = document.getElementById('vault-cards');
-    container.innerHTML = '';
-    
-    const filteredCards = currentVaultFilter === 'all' 
-        ? vaultCards 
-        : vaultCards.filter(card => card.useCases.includes(currentVaultFilter));
-    
-    const requiredScores = [0, 0, 20, 40, 60, 70];
-    filteredCards.forEach(card => {
-        const isLocked = effective < requiredScores[card.level];
-        const cardEl = document.createElement('div');
-        cardEl.className = 'vault-card' + (isLocked ? ' locked' : '');
-        
-        let useCaseBadges = card.useCases.map(uc => 
-            `<span class="vault-card-usecase">${uc}</span>`
-        ).join('');
-        
-        cardEl.innerHTML = `
+  const effective = getEffectiveScore().effective;
+  const container = document.getElementById("vault-cards");
+  container.innerHTML = "";
+
+  const filteredCards =
+    currentVaultFilter === "all"
+      ? vaultCards
+      : vaultCards.filter((card) => card.useCases.includes(currentVaultFilter));
+
+  const requiredScores = [0, 0, 20, 40, 60, 70];
+  filteredCards.forEach((card) => {
+    const isLocked = effective < requiredScores[card.level];
+    const cardEl = document.createElement("div");
+    cardEl.className = "vault-card" + (isLocked ? " locked" : "");
+
+    let useCaseBadges = card.useCases
+      .map((uc) => `<span class="vault-card-usecase">${uc}</span>`)
+      .join("");
+
+    cardEl.innerHTML = `
             <div class="lock-overlay">
                 <span>🔒</span>
                 <p>Reach Level ${card.level} to unlock</p>
@@ -30,26 +31,26 @@ function showVault() {
             <div class="vault-card-tagline">${card.tagline}</div>
             <div class="vault-card-footer">${useCaseBadges}</div>
         `;
-        
-        if (isLocked) {
-            cardEl.onclick = () => showLockedMessage(card.level);
-        } else {
-            cardEl.onclick = () => showVaultCardDetail(card);
-        }
-        
-        container.appendChild(cardEl);
-    });
-    
-    showPage('vault-page');
+
+    if (isLocked) {
+      cardEl.onclick = () => showLockedMessage(card.level);
+    } else {
+      cardEl.onclick = () => showVaultCardDetail(card);
+    }
+
+    container.appendChild(cardEl);
+  });
+
+  showPage("vault-page");
 }
 
 function showVaultCardDetail(card) {
-    const existing = document.querySelector('.modal');
-    if (existing) existing.remove();
-    
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    modal.innerHTML = `
+  const existing = document.querySelector(".modal");
+  if (existing) existing.remove();
+
+  const modal = document.createElement("div");
+  modal.className = "modal";
+  modal.innerHTML = `
         <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
             <button class="btn-text" onclick="this.closest('.modal').remove()" style="margin-bottom: 1rem;">← Back</button>
             <span class="vault-card-level" style="display: inline-block; margin-bottom: 0.5rem;">Level ${card.level}</span>
@@ -88,15 +89,17 @@ function showVaultCardDetail(card) {
             </div>
         </div>
     `;
-    document.body.appendChild(modal);
+  document.body.appendChild(modal);
 }
 
 // Vault tab click handlers
-document.getElementById('vault-tabs').addEventListener('click', (e) => {
-    if (e.target.classList.contains('vault-tab')) {
-        document.querySelectorAll('.vault-tab').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        currentVaultFilter = e.target.dataset.filter;
-        showVault();
-    }
+document.getElementById("vault-tabs").addEventListener("click", (e) => {
+  if (e.target.classList.contains("vault-tab")) {
+    document
+      .querySelectorAll(".vault-tab")
+      .forEach((t) => t.classList.remove("active"));
+    e.target.classList.add("active");
+    currentVaultFilter = e.target.dataset.filter;
+    showVault();
+  }
 });
