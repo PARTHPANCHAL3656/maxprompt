@@ -132,57 +132,299 @@ function viewDay(dayNum) {
 function showLevelUpCard(previousKey, newKey) {
     const newArchetype = archetypes[newKey];
     const oldArchetype = archetypes[previousKey];
+    const { effective } = getEffectiveScore();
+    const name = getStorage('mx_username');
 
-    // Remove any existing card
-    const existing = document.getElementById('levelup-card');
+    const existing = document.getElementById('levelup-overlay');
     if (existing) existing.remove();
 
-    const card = document.createElement('div');
-    card.id = 'levelup-card';
-    card.style.cssText = `
+    const overlay = document.createElement('div');
+    overlay.id = 'levelup-overlay';
+    overlay.style.cssText = `
         position: fixed;
-        top: 0; left: 0; right: 0;
+        inset: 0;
         z-index: 9999;
-        background: var(--bg-card, #1a1a2e);
-        border-bottom: 3px solid var(--accent, #7c3aed);
-        padding: 1.5rem;
-        text-align: center;
-        transform: translateY(-100%);
-        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        background: rgba(0,0,0,0.75);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        opacity: 0;
+        transition: opacity 0.4s ease;
     `;
 
-    card.innerHTML = `
-        <div style="font-size: 2.5rem; margin-bottom: 0.5rem">${newArchetype.badge}</div>
-        <div style="font-size: 0.75rem; letter-spacing: 0.15em; color: var(--accent, #7c3aed); font-weight: 700; text-transform: uppercase; margin-bottom: 0.25rem">LEVEL UP</div>
-        <div style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary, #fff); margin-bottom: 0.25rem">${newArchetype.title}</div>
-        <div style="font-size: 0.9rem; color: var(--text-muted, #aaa);">${oldArchetype.title} → ${newArchetype.title}</div>
-        <div style="font-size: 0.8rem; color: var(--text-muted, #aaa); margin-top: 0.5rem;">New challenges unlocked · Vault cards updating</div>
+    overlay.innerHTML = `
+        <div id="levelup-card" style="
+            background: var(--bg-card, #1a1a2e);
+            border: 2px solid var(--accent, #7c3aed);
+            border-radius: 1.25rem;
+            padding: 2rem 1.75rem 1.5rem;
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+            transform: translateY(24px);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        ">
+            <div style="font-size: 3.5rem; margin-bottom: 0.75rem; line-height:1">${newArchetype.badge}</div>
+
+            <div style="
+                font-size: 0.7rem;
+                letter-spacing: 0.18em;
+                color: var(--accent, #7c3aed);
+                font-weight: 800;
+                text-transform: uppercase;
+                margin-bottom: 0.5rem;
+            ">⚡ Level Up</div>
+
+            <div style="
+                font-size: 1.5rem;
+                font-weight: 800;
+                color: var(--text-primary, #fff);
+                margin-bottom: 0.25rem;
+            ">${newArchetype.title}</div>
+
+            <div style="
+                font-size: 0.85rem;
+                color: var(--text-muted, #aaa);
+                margin-bottom: 0.25rem;
+            ">${oldArchetype.title} → ${newArchetype.title}</div>
+
+            <div style="
+                font-size: 0.8rem;
+                color: var(--accent, #7c3aed);
+                margin-bottom: 1.5rem;
+                opacity: 0.85;
+            ">New challenges + vault cards unlocked 🔓</div>
+
+            <button id="levelup-download-btn" style="
+                width: 100%;
+                padding: 0.75rem;
+                background: var(--accent, #7c3aed);
+                color: #fff;
+                border: none;
+                border-radius: 0.75rem;
+                font-size: 0.95rem;
+                font-weight: 700;
+                cursor: pointer;
+                margin-bottom: 0.65rem;
+                letter-spacing: 0.02em;
+            ">📸 Download Achievement Card</button>
+
+            <button id="levelup-close-btn" style="
+                width: 100%;
+                padding: 0.65rem;
+                background: transparent;
+                color: var(--text-muted, #aaa);
+                border: 1px solid var(--border, #333);
+                border-radius: 0.75rem;
+                font-size: 0.875rem;
+                cursor: pointer;
+            ">Close</button>
+        </div>
     `;
 
-    document.body.appendChild(card);
+    document.body.appendChild(overlay);
 
-    // Slide in
+    // Animate in
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-            card.style.transform = 'translateY(0)';
+            overlay.style.opacity = '1';
+            document.getElementById('levelup-card').style.transform = 'translateY(0)';
         });
     });
 
-    // Auto dismiss after 4 seconds
-    setTimeout(() => {
-        card.style.transform = 'translateY(-100%)';
-        setTimeout(() => card.remove(), 500);
-    }, 4000);
+    // Download certificate
+    document.getElementById('levelup-download-btn').onclick = () => {
+        downloadCertificate(name, newArchetype, oldArchetype, effective);
+    };
 
-    // Also dismiss on tap
-    card.addEventListener('click', () => {
-        card.style.transform = 'translateY(-100%)';
-        setTimeout(() => card.remove(), 500);
-    });
+    // Close with fun confirmation
+    document.getElementById('levelup-close-btn').onclick = () => {
+        showCloseConfirm(overlay, newArchetype);
+    };
 
-    // Analytics
     if (window.va) {
         window.va('event', { name: 'level_up', data: { from: previousKey, to: newKey } });
     }
+}
+
+function showCloseConfirm(overlay, newArchetype) {
+    const existing = document.getElementById('close-confirm');
+    if (existing) existing.remove();
+
+    const confirm = document.createElement('div');
+    confirm.id = 'close-confirm';
+    confirm.style.cssText = `
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        background: rgba(0,0,0,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    `;
+
+    confirm.innerHTML = `
+        <div style="
+            background: var(--bg-card, #1a1a2e);
+            border: 1px solid var(--border, #333);
+            border-radius: 1rem;
+            padding: 1.75rem 1.5rem;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+        ">
+            <div style="font-size: 1.75rem; margin-bottom: 0.75rem">📲</div>
+            <div style="font-size: 1rem; font-weight: 700; color: var(--text-primary,#fff); margin-bottom: 0.5rem">
+                Before you go —
+            </div>
+            <div style="font-size: 0.875rem; color: var(--text-muted,#aaa); margin-bottom: 1.25rem; line-height: 1.5">
+                You just levelled up to <strong style="color:var(--accent,#7c3aed)">${newArchetype.title}</strong>.<br>
+                Most people never make it here.<br>
+                Worth sharing, no?
+            </div>
+            <button id="confirm-download" style="
+                width: 100%;
+                padding: 0.7rem;
+                background: var(--accent, #7c3aed);
+                color: #fff;
+                border: none;
+                border-radius: 0.75rem;
+                font-size: 0.9rem;
+                font-weight: 700;
+                cursor: pointer;
+                margin-bottom: 0.5rem;
+            ">📸 Download First, Then Close</button>
+            <button id="confirm-close" style="
+                width: 100%;
+                padding: 0.6rem;
+                background: transparent;
+                color: var(--text-muted,#aaa);
+                border: 1px solid var(--border,#333);
+                border-radius: 0.75rem;
+                font-size: 0.85rem;
+                cursor: pointer;
+            ">Nah, just close it</button>
+        </div>
+    `;
+
+    document.body.appendChild(confirm);
+
+    document.getElementById('confirm-download').onclick = () => {
+        confirm.remove();
+        document.getElementById('levelup-download-btn').click();
+    };
+
+    document.getElementById('confirm-close').onclick = () => {
+        confirm.remove();
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 400);
+    };
+}
+
+function downloadCertificate(name, archetype, oldArchetype, score) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1080;
+    const ctx = canvas.getContext('2d');
+
+    // Background
+    ctx.fillStyle = '#0d0d1a';
+    ctx.fillRect(0, 0, 1080, 1080);
+
+    // Outer border
+    ctx.strokeStyle = '#7c3aed';
+    ctx.lineWidth = 6;
+    ctx.strokeRect(30, 30, 1020, 1020);
+
+    // Inner border
+    ctx.strokeStyle = '#7c3aed';
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.3;
+    ctx.strokeRect(46, 46, 988, 988);
+    ctx.globalAlpha = 1;
+
+    // Top label
+    ctx.fillStyle = '#7c3aed';
+    ctx.font = 'bold 28px Arial';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '8px';
+    ctx.fillText('MAXPROMPT', 540, 110);
+
+    ctx.fillStyle = '#aaaaaa';
+    ctx.font = '20px Arial';
+    ctx.fillText('ACHIEVEMENT UNLOCKED', 540, 148);
+
+    // Divider
+    ctx.strokeStyle = '#7c3aed';
+    ctx.globalAlpha = 0.4;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(200, 170);
+    ctx.lineTo(880, 170);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Badge emoji — drawn as text
+    ctx.font = '160px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(archetype.badge, 540, 400);
+
+    // Level up tag
+    ctx.fillStyle = '#7c3aed';
+    ctx.font = 'bold 22px Arial';
+    ctx.fillText('⚡  LEVEL UP', 540, 460);
+
+    // New title
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 64px Georgia';
+    ctx.fillText(archetype.title, 540, 560);
+
+    // Transition
+    ctx.fillStyle = '#aaaaaa';
+    ctx.font = '26px Arial';
+    ctx.fillText(`${oldArchetype.title}  →  ${archetype.title}`, 540, 615);
+
+    // Score
+    ctx.fillStyle = '#7c3aed';
+    ctx.font = 'bold 40px Georgia';
+    ctx.fillText(`Effective Score: ${score}%`, 540, 690);
+
+    // Name
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '30px Arial';
+    ctx.fillText(`Achieved by ${name}`, 540, 750);
+
+    // Date
+    const today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+    ctx.fillStyle = '#666666';
+    ctx.font = '22px Arial';
+    ctx.fillText(today, 540, 800);
+
+    // Divider
+    ctx.strokeStyle = '#7c3aed';
+    ctx.globalAlpha = 0.4;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(200, 840);
+    ctx.lineTo(880, 840);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Bottom CTA
+    ctx.fillStyle = '#aaaaaa';
+    ctx.font = '22px Arial';
+    ctx.fillText('maxprompt-blue.vercel.app', 540, 900);
+
+    ctx.fillStyle = '#555555';
+    ctx.font = '18px Arial';
+    ctx.fillText('Find out your AI skill level — free, no login', 540, 935);
+
+    // Download
+    const link = document.createElement('a');
+    link.download = `MaxPrompt_${archetype.title.replace(/\s/g, '_')}_${name}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
 }
