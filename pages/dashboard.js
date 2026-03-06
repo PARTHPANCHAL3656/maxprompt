@@ -323,7 +323,7 @@ function showCloseConfirm(overlay, newArchetype) {
         setTimeout(() => overlay.remove(), 400);
     };
 }
-
+// v2 - New Celebration !!
 function downloadCertificate(name, archetype, oldArchetype, score) {
     const canvas = document.createElement('canvas');
     canvas.width = 1080;
