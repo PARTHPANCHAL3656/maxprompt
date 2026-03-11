@@ -1,8 +1,10 @@
 # MaxPrompt
+> AI Literacy & Gamified Prompt Engineering Platform
 
-**Discover how well you actually use AI — then level up.**
-
-Most people think they're good at AI. MaxPrompt finds out if they're right.
+Live: https://maxprompt-blue.vercel.app  
+Built by: Parth Panchal | 1st Year BTech CSE | Vadodara, India  
+Stack: HTML · CSS · JS · Vercel · OpenRouter · Canvas API  
+Budget: ₹0 | Build time: 3 days ~ 14+ hrs
 
 ---
 
@@ -59,6 +61,8 @@ The 99% cap is intentional. Mastery is a direction, not a destination.
 ```
 maxprompt/
 │
+├── README.md      ← quick overview 
+├── PRODUCT.md     ← full PRD content
 ├── index.html              ← single page app shell
 │
 ├── api/
