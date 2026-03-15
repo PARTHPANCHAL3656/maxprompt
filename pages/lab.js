@@ -230,7 +230,7 @@ async function saveToPlaybook() {
   // Also save structured row to Supabase
   const userId = getUserId();
   if (userId) {
-    await supabase.from('playbook_prompts').insert({
+    await _supabase.from('playbook_prompts').insert({
       id: savedPrompt.id,
       user_id: userId,
       mission_id: savedPrompt.missionId,
