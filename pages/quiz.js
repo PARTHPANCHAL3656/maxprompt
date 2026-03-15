@@ -362,6 +362,59 @@ function resetAll() {
   }
 }
 
+// ─── Recovery code UI ─────────────────────────────────────────────────────
+function toggleRestoreInput() {
+  const area = document.getElementById('restore-area');
+  area.classList.toggle('hidden');
+  if (!area.classList.contains('hidden')) {
+    document.getElementById('recovery-code-input').focus();
+  }
+}
+
+async function handleRestore() {
+  const input = document.getElementById('recovery-code-input').value.trim();
+  const msgEl = document.getElementById('restore-msg');
+  const btn = document.querySelector('#restore-area .btn-primary');
+
+  if (input.replace(/-/g, '').length < 8) {
+    msgEl.style.color = 'var(--danger)';
+    msgEl.textContent = 'Enter your full 8-character code.';
+    return;
+  }
+
+  btn.textContent = 'Restoring...';
+  btn.disabled = true;
+  msgEl.textContent = '';
+
+  const result = await restoreFromCode(input);
+
+  if (result.success) {
+    msgEl.style.color = 'var(--secondary, #10b981)';
+    msgEl.textContent = '✅ Progress restored!';
+    setTimeout(() => renderSection('dashboard'), 1000);
+  } else {
+    msgEl.style.color = 'var(--danger)';
+    msgEl.textContent = result.message;
+    btn.textContent = 'Restore My Progress';
+    btn.disabled = false;
+  }
+}
+
+// auto-format code input as user types (inserts dash after char 4)
+document.addEventListener('DOMContentLoaded', () => {
+  const codeInput = document.getElementById('recovery-code-input');
+  if (codeInput) {
+    codeInput.addEventListener('input', function () {
+      let val = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      if (val.length > 4) val = val.slice(0, 4) + '-' + val.slice(4, 8);
+      this.value = val;
+    });
+    codeInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') handleRestore();
+    });
+  }
+});
+
 async function initApp() {
   await initSupabase();          // start anonymous session
   await loadFromSupabase();      // hydrate localStorage from DB
