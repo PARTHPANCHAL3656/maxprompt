@@ -446,3 +446,63 @@ document
   });
 
 document.addEventListener("DOMContentLoaded", initApp);
+
+//Addition - 4
+document.addEventListener('DOMContentLoaded', () => {
+  const codeInput = document.getElementById('recovery-code-input');
+  if (codeInput) {
+    codeInput.addEventListener('input', function () {
+      let val = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      if (val.length > 4) val = val.slice(0, 4) + '-' + val.slice(4, 8);
+      this.value = val;
+    });
+    codeInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') handleRestore();
+    });
+  }
+});
+
+async function _showRecoveryCodeModal() {
+  const code = await createRecoveryCode();
+  if (!code) return;
+  setStorage('mx_code_shown', '1');
+  setStorage('mx_recovery_code', code);
+
+  const modal = document.createElement('div');
+  modal.className = 'lock-modal-overlay';
+  modal.innerHTML = `
+    <div class="lock-modal">
+      <div class="lock-modal-icon">🔑</div>
+      <h3>Save Your Recovery Code</h3>
+      <p style="font-size: 0.9rem; color: var(--text-secondary);">
+        Use this to restore your progress on a new device or if you clear your browser.
+      </p>
+      <div style="
+        background: var(--bg-card, #1a1a2e);
+        border: 2px solid var(--accent, #7c3aed);
+        border-radius: 0.75rem;
+        padding: 1rem 0.5rem;
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        color: var(--accent, #7c3aed);
+        margin: 1rem 0;
+        font-family: monospace;
+      ">${code}</div>
+      <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Screenshot this or write it down. It won't show again.
+      </p>
+      <div class="lock-modal-actions">
+        <button class="btn-secondary" id="copy-code-btn" onclick="
+          navigator.clipboard.writeText('${code}');
+          this.textContent = '✅ Copied!';
+        ">📋 Copy Code</button>
+        <button class="btn-primary" onclick="this.closest('.lock-modal-overlay').remove()">
+          Got it, saved ✓
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
