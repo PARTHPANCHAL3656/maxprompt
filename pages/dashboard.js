@@ -97,14 +97,15 @@ function showDashboard() {
 }
 
 function viewDay(dayNum) {
+    
     const challengesDone = JSON.parse(getStorage('mx_challenges_done') || '[]');
     const currentDay = parseInt(getStorage('mx_day') || 1);
 
-    if (dayNum > currentDay && !challengesDone.includes(dayNum)) {
-        alert(`Complete Day ${dayNum - 1} first to unlock this challenge!`);
+    if (dayNum > currentDay) {
+        showRewardToast(`Complete Day ${currentDay} first!`, 2000);
         return;
     }
-
+    
     const { effective } = getEffectiveScore(); // ✅ use effective not raw score
     const name = getStorage('mx_username');
     const archetypeKey = getArchetype(effective); // ✅ live archetype
