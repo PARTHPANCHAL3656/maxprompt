@@ -363,13 +363,9 @@ function resetAll() {
 }
 
 async function initApp() {
-  // Init Supabase first
-  await initSupabase();
-  
-  // Load their data from Supabase into localStorage
-  await loadFromSupabase();
-  
-  // Then your existing logic runs normally — nothing else changes
+  await initSupabase();          // start anonymous session
+  await loadFromSupabase();      // hydrate localStorage from DB
+
   const savedUsername = getStorage('mx_username');
   const savedScore = getStorage('mx_score');
 
