@@ -17,7 +17,8 @@
   </head>
   <body>
     <div id="app">
-      <!-- Landing Page -->
+      
+      <!-- Replace your existing landing-page section with this -->
       <section id="landing-page" class="page">
         <div class="landing-content">
           <h1 class="logo">MaxPrompt</h1>
@@ -25,9 +26,32 @@
           <button class="btn-primary" onclick="goToNameInput()">
             Start Assessment
           </button>
+      
+          <!-- Recovery restore UI -->
+          <button 
+            class="btn-text" 
+            onclick="toggleRestoreInput()"
+            style="margin-top: 1.25rem; font-size: 0.875rem; color: var(--text-muted); display: block; width: 100%;">
+            Already have a code? Restore progress →
+          </button>
+      
+          <div id="restore-area" class="hidden" style="margin-top: 1rem;">
+            <input 
+              type="text" 
+              id="recovery-code-input" 
+              class="name-input"
+              placeholder="e.g. ABCD-1234"
+              maxlength="9"
+              style="text-align: center; letter-spacing: 0.15em; font-size: 1.1rem; text-transform: uppercase;"
+            />
+            <p id="restore-msg" style="font-size: 0.85rem; min-height: 1.2em; margin-top: 0.4rem; text-align: center;"></p>
+            <button class="btn-primary" onclick="handleRestore()" style="margin-top: 0.5rem; width: 100%;">
+              Restore My Progress
+            </button>
+          </div>
         </div>
       </section>
-
+      
       <!-- Name Input Screen -->
       <section id="name-input-page" class="page hidden">
         <div class="name-content">
