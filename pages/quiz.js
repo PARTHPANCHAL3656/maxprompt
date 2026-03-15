@@ -332,11 +332,12 @@ function completeAndAdvance(dayNum) {
   }
 
   const currentDay = parseInt(getStorage("mx_day") || 1);
-  if (currentDay < 7) {
+  if (dayNum === currentDay && currentDay < 7) {
     setStorage("mx_day", currentDay + 1);
   }
 
-  navigateTo("dashboard");
+  // showDashboard directly — avoids hash timing bug
+  showDashboard();
 }
 
 function retakeQuiz() {
