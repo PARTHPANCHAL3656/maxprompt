@@ -193,7 +193,7 @@ function showScoreReveal() {
   
   // Vercel Analytics — track quiz completion
   if (window.va) {
-    window.va("event", { name: "quiz_completed", data: { score: finalScore } });
+    window.va("event", { name: "quiz_completed", data: { score: result.total } });
   }
   // In pages/lab.js — after a mission passes 75%
   if (window.va) window.va("event", { name: "lab_mission_passed" });
@@ -423,6 +423,9 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initApp() {
   await initSupabase();          // start anonymous session
   await loadFromSupabase();      // hydrate localStorage from DB
+  
+  const currentPage = document.querySelector('.page:not(.hidden)');
+  if (currentPage && currentPage.id !== 'landing-page') return;
 
   const savedUsername = getStorage('mx_username');
   const savedScore = getStorage('mx_score');
@@ -448,19 +451,6 @@ document
 document.addEventListener("DOMContentLoaded", initApp);
 
 //Addition - 4
-document.addEventListener('DOMContentLoaded', () => {
-  const codeInput = document.getElementById('recovery-code-input');
-  if (codeInput) {
-    codeInput.addEventListener('input', function () {
-      let val = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-      if (val.length > 4) val = val.slice(0, 4) + '-' + val.slice(4, 8);
-      this.value = val;
-    });
-    codeInput.addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') handleRestore();
-    });
-  }
-});
 
 async function _showRecoveryCodeModal() {
   const code = await createRecoveryCode();
