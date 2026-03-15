@@ -188,7 +188,7 @@ function showScoreReveal() {
 
   // Vercel Analytics — track quiz completion
   if (window.va) {
-    window.va('event', { name: 'quiz_completed', data: { score: result.total, archetype: archetypeKey } });
+    window.va("event", { name: "quiz_completed", data: { score: finalScore } });
   }
   // In pages/lab.js — after a mission passes 75%
   if (window.va) window.va("event", { name: "lab_mission_passed" });
@@ -240,12 +240,19 @@ function showScoreReveal() {
   setTimeout(() => {
     const seeBtn = document.getElementById("see-breakdown-btn");
     seeBtn.classList.remove("hidden");
+    
+    // Pre-show the nav bar so dashboard works without reload
+    document.getElementById("main-nav").classList.remove("hidden");
+    document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
+    const dashNav = document.getElementById("nav-dashboard");
+    if (dashNav) dashNav.classList.add("active");
   }, 4500);
-  
 }
 
 function showBreakdown() {
   showArchetypePage();
+  // Ensure nav is visible after quiz completion
+  document.getElementById("main-nav").classList.remove("hidden");
 }
 
 function showArchetypePage() {
@@ -294,7 +301,7 @@ function goToChallenge() {
   if (challengesDone.includes(currentDay)) {
     completeBtn.textContent = "Back to Dashboard";
     completeBtn.onclick = function () {
-      showDashboard();
+      navigateTo("dashboard");
     };
   } else {
     completeBtn.textContent = "Mark Complete";
@@ -324,7 +331,7 @@ function completeAndAdvance(dayNum) {
     setStorage("mx_day", currentDay + 1);
   }
 
-  showDashboard();
+  navigateTo("dashboard");
 }
 
 function retakeQuiz() {
@@ -355,19 +362,26 @@ function resetAll() {
   }
 }
 
-function initApp() {
-  const savedUsername = getStorage("mx_username");
-  const savedScore = getStorage("mx_score");
+async function initApp() {
+  // Init Supabase first
+  await initSupabase();
+  
+  // Load their data from Supabase into localStorage
+  await loadFromSupabase();
+  
+  // Then your existing logic runs normally — nothing else changes
+  const savedUsername = getStorage('mx_username');
+  const savedScore = getStorage('mx_score');
 
   if (savedUsername && savedScore !== null) {
-    const hash = window.location.hash.slice(1) || "dashboard";
+    const hash = window.location.hash.slice(1) || 'dashboard';
     renderSection(hash);
   } else if (savedUsername) {
     username = savedUsername;
     goToPrediction();
   } else {
-    document.getElementById("main-nav").classList.add("hidden");
-    showPage("landing-page");
+    document.getElementById('main-nav').classList.add('hidden');
+    showPage('landing-page');
   }
 }
 
