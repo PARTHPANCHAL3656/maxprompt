@@ -205,31 +205,47 @@ function retryMission() {
     showMissionDetail(currentMission);
 }
 
-function saveToPlaybook() {
-    if (!lastEvaluationResult || lastEvaluationResult.totalScore < 70) return;
-    
-    const playbook = JSON.parse(getStorage('mx_playbook') || '[]');
-    const userPrompt = document.getElementById('user-prompt-input').value;
-    const vaultCard = vaultCards.find(v => v.id === currentMission.vaultCardId);
-    
-    const savedPrompt = {
-        id: 'PLB_' + Date.now(),
-        missionId: currentMission.id,
-        missionTitle: currentMission.title,
-        category: currentMission.category,
-        prompt: userPrompt,
-        score: lastEvaluationResult.totalScore,
-        savedAt: new Date().toISOString().split('T')[0],
-        vaultCardId: currentMission.vaultCardId,
-        technique: vaultCard ? vaultCard.plainName : ''
-    };
-    
-    playbook.push(savedPrompt);
-    setStorage('mx_playbook', JSON.stringify(playbook));
-    
-    showRewardToast('Saved! Check dashboard for updated Lab bonus →', 3000);
-    
-    setTimeout(() => navigateTo('playbook'), 1500);
+async function saveToPlaybook() {
+  if (!lastEvaluationResult || lastEvaluationResult.totalScore < 70) return;
+  
+  const playbook = JSON.parse(getStorage('mx_playbook') || '[]');
+  const userPrompt = document.getElementById('user-prompt-input').value;
+  const vaultCard = vaultCards.find(v => v.id === currentMission.vaultCardId);
+  
+  const savedPrompt = {
+    id: 'PLB_' + Date.now(),
+    missionId: currentMission.id,
+    missionTitle: currentMission.title,
+    category: currentMission.category,
+    prompt: userPrompt,
+    score: lastEvaluationResult.totalScore,
+    savedAt: new Date().toISOString().split('T')[0],
+    vaultCardId: currentMission.vaultCardId,
+    technique: vaultCard ? vaultCard.plainName : ''
+  };
+  
+  playbook.push(savedPrompt);
+  setStorage('mx_playbook', JSON.stringify(playbook));
+  
+  // Also save structured row to Supabase
+  const userId = getUserId();
+  if (userId) {
+    await supabase.from('playbook_prompts').insert({
+      id: savedPrompt.id,
+      user_id: userId,
+      mission_id: savedPrompt.missionId,
+      mission_title: savedPrompt.missionTitle,
+      category: savedPrompt.category,
+      prompt: savedPrompt.prompt,
+      score: savedPrompt.score,
+      technique: savedPrompt.technique,
+      saved_at: savedPrompt.savedAt,
+      vault_card_id: savedPrompt.vaultCardId
+    });
+  }
+  
+  showRewardToast('Saved! Check dashboard for updated Lab bonus →', 3000);
+  setTimeout(() => navigateTo('playbook'), 1500);
 }
 
 function copyCurrentPrompt() {
