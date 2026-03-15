@@ -186,6 +186,11 @@ function showScoreReveal() {
   setStorage("mx_day", 1);
   setStorage("mx_challenges_done", JSON.stringify([]));
 
+  // ← ADD THIS (only show once, first quiz ever)
+  if (!getStorage('mx_code_shown')) {
+    setTimeout(() => _showRecoveryCodeModal(), 5000); // after score animation
+  }
+  
   // Vercel Analytics — track quiz completion
   if (window.va) {
     window.va("event", { name: "quiz_completed", data: { score: finalScore } });
